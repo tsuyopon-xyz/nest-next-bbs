@@ -2,16 +2,17 @@
   "name": "nest-next-bbs",
   "version": "1.0.0",
   "description": "",
+  "private": true,
   "main": "index.js",
   "scripts": {
-    "dev:backend": "npm run start:dev --workspace=backend",
-    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run start:dev --workspace=backend/app",
+    "dev:frontend": "npm run dev --workspace=frontend/app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "workspaces": [
-    "backend",
-    "frontend"
+    "backend/app",
+    "frontend/app"
   ]
 }
