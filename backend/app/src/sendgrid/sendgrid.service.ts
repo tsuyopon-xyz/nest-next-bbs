@@ -22,7 +22,7 @@ export class SendgridService {
   }
 
   @OnEvent(SignUpConfirmMail.type)
-  sendHelloMail(msg: SignUpConfirmMail) {
+  sendSignUpConfirmMail(msg: SignUpConfirmMail) {
     return this.send(msg.message());
   }
 }
