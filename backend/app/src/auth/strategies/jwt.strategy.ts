@@ -1,8 +1,8 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from '../constants';
-import { User } from 'src/users/types';
+// import { User } from 'src/users/types';
+import { User } from '@prisma/client';
 import { JWTPayload } from '../types';
 
 @Injectable()
@@ -11,11 +11,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
+      secretOrKey: process.env.JWT_VERIFICATION_TOKEN_SECRET,
     });
   }
 
-  async validate(payload: JWTPayload): Promise<User> {
-    return { userId: payload.sub, username: payload.username };
+  async validate(
+    payload: JWTPayload,
+  ): Promise<Pick<User, 'id' | 'name' | 'email'>> {
+    return { id: payload.sub, name: payload.name, email: payload.email };
   }
 }

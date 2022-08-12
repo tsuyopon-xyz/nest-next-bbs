@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { User } from 'src/users/types';
+import type { User } from 'src/prisma/types';
 import { JwtService } from '@nestjs/jwt';
 import { JWTPayload } from './types';
 import { SignUpDto } from './dtos/signup.dto';
 import { SendgridEmitter } from 'src/sendgrid/sendgrid.emitter';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -12,22 +13,24 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private sendgrid: SendgridEmitter,
+    private readonly configService: ConfigService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<User> {
-    // const user = await this.usersService.findOne(username);
-    // if (user && user.password === pass) {
-    //   // Trim password from user object
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   const { password, ...result } = user;
-
-    //   return result;
-    // }
-    return null;
+  async validateUser(email: string, password: string): Promise<User | null> {
+    try {
+      const user = await this.usersService.findOne(email, password);
+      return user;
+    } catch (error) {
+      return null;
+    }
   }
 
   async login(user: User) {
-    const payload: JWTPayload = { username: user.username, sub: user.userId };
+    const payload: JWTPayload = {
+      sub: user.id,
+      name: user.name,
+      email: user.email,
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -41,11 +44,44 @@ export class AuthService {
       // 本登録の依頼メールの送信
       const from = process.env.SENDGRID_EMAIL_FROM;
       const to = user.email;
-      const jwtForActivate = 'todo-implement-fwt-feature';
 
-      this.sendgrid.sendSignUpConfirmMail(to, from, jwtForActivate);
+      const payload: JWTPayload = {
+        sub: user.id,
+        name: user.name,
+        email: user.email,
+      };
+      const jwt = this.jwtService.sign(payload);
+
+      this.sendgrid.sendSignUpConfirmMail(to, from, jwt);
     } catch (error) {
       throw error;
     }
+  }
+
+  // 参考記事: https://wanago.io/2021/07/12/api-nestjs-confirming-email/
+  async decodeConfirmationToken(jwt: string) {
+    try {
+      const payload = (await this.jwtService.verify(jwt, {
+        secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
+      })) as JWTPayload;
+
+      if (typeof payload === 'object' && 'email' in payload) {
+        return payload.email;
+      }
+      throw new BadRequestException();
+    } catch (error) {
+      if (error?.name === 'TokenExpiredError') {
+        throw new BadRequestException('Email confirmation token expired');
+      }
+      throw new BadRequestException('Bad confirmation token');
+    }
+  }
+
+  public async confirmEmail(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (user.isEmailConfirmed) {
+      throw new BadRequestException('Email already confirmed');
+    }
+    await this.usersService.markEmailAsConfirmedByUserId(user.id);
   }
 }
