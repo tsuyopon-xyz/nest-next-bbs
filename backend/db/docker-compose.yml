@@ -1,7 +1,8 @@
 version: '3.8'
 services:
-  db:
+  postgres:
     build: .
+    restart: always
     ports:
       - 5433:5432
     environment:
@@ -10,3 +11,4 @@ services:
       POSTGRES_DB: develop
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
