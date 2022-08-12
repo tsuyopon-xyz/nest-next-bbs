@@ -7,6 +7,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { AuthController } from './auth.controller';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { SendgridEmitter } from 'src/sendgrid/sendgrid.emitter';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, SendgridEmitter],
   controllers: [AuthController],
   exports: [AuthService],
 })

@@ -4,12 +4,14 @@ import { User } from 'src/users/types';
 import { JwtService } from '@nestjs/jwt';
 import { JWTPayload } from './types';
 import { SignUpDto } from './dtos/signup.dto';
+import { SendgridEmitter } from 'src/sendgrid/sendgrid.emitter';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private sendgrid: SendgridEmitter,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<User> {
@@ -37,7 +39,11 @@ export class AuthService {
       const user = await this.usersService.create(name, email, password);
 
       // 本登録の依頼メールの送信
-      console.log(`TODO: ${user.email}に仮登録完了メールを送信`);
+      const from = process.env.SENDGRID_EMAIL_FROM;
+      const to = user.email;
+      const jwtForActivate = 'todo-implement-fwt-feature';
+
+      this.sendgrid.sendSignUpConfirmMail(to, from, jwtForActivate);
     } catch (error) {
       throw error;
     }
