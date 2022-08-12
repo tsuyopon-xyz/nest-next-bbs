@@ -12,9 +12,10 @@ export class UsersService {
 
   async create(username: string, email: string, password: string) {
     // emailの重複チェック
-    const userForCheck = await this.prismaService.user.findUnique({
+    const userForCheck = await this.prismaService.user.findFirst({
       where: {
         email,
+        deletedAt: null,
       },
     });
     if (userForCheck) {
