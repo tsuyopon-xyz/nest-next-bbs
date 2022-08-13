@@ -11,12 +11,13 @@ datasource db {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  name             String
-  email            String // uniqueにしない理由: 論理削除値が入っている場合も、登録できるようにするため
-  password         String // 「salt値.hash(salt+passowrd)」をセットする
-  isEmailConfirmed Boolean   @default(false) // 本登録のフラグ（登録後すぐは仮登録としてfalseが入る）
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime? @updatedAt
-  deletedAt        DateTime? // 論理削除用
+  id                 Int       @id @default(autoincrement())
+  name               String
+  email              String // uniqueにしない理由: 論理削除値が入っている場合も、登録できるようにするため
+  password           String // 「salt値.hash(salt+passowrd)」をセットする
+  hashedRefreshToken String? // JWTを更新するためのハッシュ値を保存
+  isEmailConfirmed   Boolean   @default(false) // 本登録のフラグ（登録後すぐは仮登録としてfalseが入る）
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime? @updatedAt
+  deletedAt          DateTime? // 論理削除用
 }

@@ -84,6 +84,6 @@ export class AuthService {
     if (user.isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
     }
-    await this.usersService.markEmailAsConfirmedByUserId(user.id);
+    await this.usersService.update({ id: user.id, isEmailConfirmed: true });
   }
 }
