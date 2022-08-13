@@ -8,4 +8,10 @@ export type SigninResponse = {
   name: string;
   email: string;
   accessToken: string;
+  refreshToken: string;
+};
+
+export type Tokens = {
+  accessToken: string;
+  refreshToken: string;
 };

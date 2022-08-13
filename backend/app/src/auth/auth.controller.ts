@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Post,
   Query,
   Request,
@@ -9,7 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JWTAuthGuard } from './guards/jwt.guard';
+import { JWTAuthGuard } from './guards/jwt-auth.guard';
+import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignUpDto } from './dtos/signup.dto';
 import { Response } from 'express';
@@ -23,19 +25,6 @@ export class AuthController {
     return this.authService.signup(body);
   }
 
-  @Get('confirm-email')
-  async confirmEmail(@Res() res: Response, @Query('token') token: string) {
-    // TODO: token(JWT)が有効化チェック
-    try {
-      const email = await this.authService.decodeConfirmationToken(token);
-      await this.authService.confirmEmail(email);
-      res.redirect('http://localhost:3000/?confirm=succeeded');
-    } catch (error) {
-      console.log('confirm error : ' + error);
-      return res.redirect('http://localhost:3000/?confirm=failed');
-    }
-  }
-
   @UseGuards(LocalAuthGuard)
   @Post('signin')
   // async signin(@Request() req, @Body() _loginDto: LoginDto) {
@@ -44,10 +33,34 @@ export class AuthController {
     return this.authService.signin(req.user);
   }
 
+  @UseGuards(JwtRefreshAuthGuard)
+  @Post('signout')
+  async signout(@Request() req) {
+    return this.authService.signout(req.user);
+  }
+
+  @UseGuards(JwtRefreshAuthGuard)
+  @Post('refresh-token')
+  async refreshToken(@Request() req, @Headers('authorization') authorization) {
+    return this.authService.refreshToken(req.user, authorization);
+  }
+
   @UseGuards(JWTAuthGuard)
   @Get('profile')
   // async login(@Request() req, @Body() _loginDto: LoginDto) {
   async getProfile(@Request() req) {
     return req.user;
+  }
+
+  @Get('confirm-email')
+  async confirmEmail(@Res() res: Response, @Query('token') token: string) {
+    try {
+      const email = await this.authService.decodeConfirmationToken(token);
+      await this.authService.confirmEmail(email);
+      res.redirect('http://localhost:3000/?confirm=succeeded');
+    } catch (error) {
+      console.log('confirm error : ' + error);
+      return res.redirect('http://localhost:3000/?confirm=failed');
+    }
   }
 }

@@ -17,8 +17,10 @@ import { SendgridModule } from './sendgrid/sendgrid.module';
           .valid('development', 'test', 'production')
           .required(),
         PORT: Joi.number().required(),
-        JWT_VERIFICATION_TOKEN_SECRET: Joi.string().required(),
-        JWT_VERIFICATION_TOKEN_EXPIRATION_SECONDS: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION: Joi.string().required(),
+        JWT_REFRESH_SECRET: Joi.string().required(),
+        JWT_REFRESH_EXPIRATION: Joi.string().required(),
         EMAIL_CONFIRMATION_URL: Joi.string().required(),
         SENDGRID_API_KEY: Joi.string().required(),
         SENDGRID_EMAIL_FROM: Joi.string().required(),
