@@ -27,9 +27,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  // async signin(@Request() req, @Body() _loginDto: LoginDto) {
   async signin(@Request() req) {
-    // return req.user;
     return this.authService.signin(req.user);
   }
 
@@ -47,7 +45,6 @@ export class AuthController {
 
   @UseGuards(JWTAuthGuard)
   @Get('profile')
-  // async login(@Request() req, @Body() _loginDto: LoginDto) {
   async getProfile(@Request() req) {
     return req.user;
   }
