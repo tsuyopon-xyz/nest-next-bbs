@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  postgres:
+    build: .
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: develop
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql

@@ -5,19 +5,21 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthController } from './auth.controller';
-import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { SendgridEmitter } from 'src/sendgrid/sendgrid.emitter';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [
-    UsersModule,
-    PassportModule,
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
-    }),
+  imports: [UsersModule, PassportModule, JwtModule.register({})],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    SendgridEmitter,
+    ConfigService,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
