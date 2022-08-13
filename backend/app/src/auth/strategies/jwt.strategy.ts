@@ -4,10 +4,11 @@ import { Injectable } from '@nestjs/common';
 // import { User } from 'src/users/types';
 import { User } from '@prisma/client';
 import { JWTPayload } from '../types';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -17,7 +18,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(
     payload: JWTPayload,
-  ): Promise<Pick<User, 'id' | 'name' | 'email'>> {
-    return { id: payload.sub, name: payload.name, email: payload.email };
+  ): Promise<Pick<User, 'id' | 'name' | 'email'> | null> {
+    const user = await this.usersService.findByEmail(payload.email);
+    console.log(user);
+    if (!user) return null;
+
+    return { id: user.id, name: user.name, email: user.email };
   }
 }

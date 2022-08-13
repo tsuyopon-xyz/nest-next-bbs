@@ -31,7 +31,7 @@ export class UsersService {
     return { id: user.id, name: user.name, email: user.email };
   }
 
-  async findByEmail(email: string): Promise<PrismaUser> {
+  async findByEmail(email: string): Promise<PrismaUser | null> {
     const user = await this.prismaService.user.findFirst({
       where: {
         email,
@@ -39,7 +39,7 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new BadRequestException('ユーザーは存在しません');
+      return null;
     }
 
     return user;
