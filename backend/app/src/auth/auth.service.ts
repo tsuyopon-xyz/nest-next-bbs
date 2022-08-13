@@ -3,7 +3,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import type { User } from 'src/prisma/types';
 import type { User as PrismaUser } from '@prisma/client';
@@ -12,6 +11,10 @@ import { JWTPayload, SigninResponse, Tokens } from './types';
 import { SignUpDto } from './dtos/signup.dto';
 import { SendgridEmitter } from 'src/sendgrid/sendgrid.emitter';
 import { ConfigService } from '@nestjs/config';
+import {
+  bcryptHashWithSHA256,
+  compareBcryptHashWithSHA256,
+} from 'src/utils/hash';
 
 @Injectable()
 export class AuthService {
@@ -22,13 +25,9 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User | null> {
-    try {
-      const user = await this.usersService.findOne(email, password);
-      return user;
-    } catch (error) {
-      return null;
-    }
+  async validateUser(email: string, password: string): Promise<User> {
+    const user = await this.usersService.findOne(email, password);
+    return user;
   }
 
   async signin(user: User): Promise<SigninResponse> {
@@ -107,8 +106,12 @@ export class AuthService {
     authorization: string,
   ): Promise<SigninResponse> {
     const refreshToken = authorization.replace('Bearer', '').trim();
+    const isRefreshTokenCorrect = await compareBcryptHashWithSHA256(
+      refreshToken,
+      user.hashedRefreshToken,
+    );
 
-    if (!bcrypt.compareSync(refreshToken, user.hashedRefreshToken)) {
+    if (!isRefreshTokenCorrect) {
       throw new UnauthorizedException();
     }
 
@@ -126,12 +129,11 @@ export class AuthService {
     user: User,
     refreshToken: string,
   ): Promise<void> {
-    const salt = await bcrypt.genSalt();
-    const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+    const bcryptHashedRefreshToken = await bcryptHashWithSHA256(refreshToken);
 
     await this.usersService.update({
       id: user.id,
-      hashedRefreshToken,
+      hashedRefreshToken: bcryptHashedRefreshToken,
     });
   }
 
