@@ -3,3 +3,9 @@ export type JWTPayload = {
   name: string;
   email: string;
 };
+
+export type SigninResponse = {
+  name: string;
+  email: string;
+  accessToken: string;
+};

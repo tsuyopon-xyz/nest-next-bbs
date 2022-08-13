@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import type { User } from 'src/prisma/types';
 import { JwtService } from '@nestjs/jwt';
-import { JWTPayload } from './types';
+import { JWTPayload, SigninResponse } from './types';
 import { SignUpDto } from './dtos/signup.dto';
 import { SendgridEmitter } from 'src/sendgrid/sendgrid.emitter';
 import { ConfigService } from '@nestjs/config';
@@ -25,14 +25,16 @@ export class AuthService {
     }
   }
 
-  async login(user: User) {
+  async signin(user: User): Promise<SigninResponse> {
     const payload: JWTPayload = {
       sub: user.id,
       name: user.name,
       email: user.email,
     };
     return {
-      access_token: this.jwtService.sign(payload),
+      name: user.name,
+      email: user.email,
+      accessToken: this.jwtService.sign(payload),
     };
   }
 

@@ -41,7 +41,7 @@ export class AuthController {
   // async signin(@Request() req, @Body() _loginDto: LoginDto) {
   async signin(@Request() req) {
     // return req.user;
-    return this.authService.login(req.user);
+    return this.authService.signin(req.user);
   }
 
   @UseGuards(JWTAuthGuard)
