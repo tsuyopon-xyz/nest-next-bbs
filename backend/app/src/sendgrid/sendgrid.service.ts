@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as sendgrid from '@sendgrid/mail';
 import { SignUpConfirmMail } from './mails/signup-confirm.mail';
+import { RequestPasswordResetMail } from './mails/request-password-reset.mail';
 import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
@@ -23,6 +24,11 @@ export class SendgridService {
 
   @OnEvent(SignUpConfirmMail.type)
   sendSignUpConfirmMail(msg: SignUpConfirmMail) {
+    return this.send(msg.message());
+  }
+
+  @OnEvent(RequestPasswordResetMail.type)
+  sendRequestPasswordResetMail(msg: RequestPasswordResetMail) {
     return this.send(msg.message());
   }
 }

@@ -14,6 +14,8 @@ import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignUpDto } from './dtos/signup.dto';
+import { RequestPasswordResetDto } from './dtos/request-password-reset.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { Response } from 'express';
 
 @Controller('auth')
@@ -59,5 +61,16 @@ export class AuthController {
       console.log('confirm error : ' + error);
       return res.redirect('http://localhost:3000/?confirm=failed');
     }
+  }
+
+  @Post('request-password-reset')
+  async requestPasswordRest(@Body() body: RequestPasswordResetDto) {
+    await this.authService.requestResetPassword(body.email);
+  }
+
+  @UseGuards(JWTAuthGuard)
+  @Post('reset-password')
+  async resetPassword(@Request() req, @Body() body: ResetPasswordDto) {
+    await this.authService.resetPassword(req.user.id, body.password);
   }
 }

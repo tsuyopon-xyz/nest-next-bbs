@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     payload: JWTPayload,
   ): Promise<Pick<User, 'id' | 'name' | 'email'> | null> {
     const user = await this.usersService.findByEmail(payload.email);
-    if (!user || !user.hashedRefreshToken) {
+    if (!user) {
       throw new UnauthorizedException();
     }
 

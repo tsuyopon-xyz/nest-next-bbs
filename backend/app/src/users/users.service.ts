@@ -68,6 +68,16 @@ export class UsersService {
     return newUser;
   }
 
+  async resetPassword(id: number, newPassword: string) {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await this.update({
+      id,
+      password: hashedPassword,
+    });
+  }
+
   async update(updateInput: UpdateInput) {
     let id = updateInput.id;
     const email = updateInput.email;

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
@@ -62,7 +63,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
       };
-      // const jwt = this.jwtService.sign(payload);
+
       const jwt = await this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_SECRET'),
         expiresIn: this.configService.get('JWT_EXPIRATION'),
@@ -72,6 +73,33 @@ export class AuthService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async requestResetPassword(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    const from = process.env.SENDGRID_EMAIL_FROM;
+    const to = user.email;
+
+    const payload: JWTPayload = {
+      sub: user.id,
+      name: user.name,
+      email: user.email,
+    };
+
+    const jwt = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: this.configService.get('JWT_EXPIRATION'),
+    });
+
+    this.sendgrid.sendRequestPasswordResetMail(to, from, jwt);
+  }
+
+  async resetPassword(userId: number, newPassword: string) {
+    await this.usersService.resetPassword(userId, newPassword);
   }
 
   // 参考記事: https://wanago.io/2021/07/12/api-nestjs-confirming-email/
