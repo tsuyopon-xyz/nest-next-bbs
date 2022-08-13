@@ -20,7 +20,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     payload: JWTPayload,
   ): Promise<Pick<User, 'id' | 'name' | 'email'> | null> {
     const user = await this.usersService.findByEmail(payload.email);
-    console.log(user);
     if (!user) return null;
 
     return { id: user.id, name: user.name, email: user.email };
