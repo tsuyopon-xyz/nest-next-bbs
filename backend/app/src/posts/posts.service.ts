@@ -28,8 +28,25 @@ export class PostsService {
     return post;
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  async findAll() {
+    const posts = await this.prismaService.post.findMany({
+      where: {
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return posts;
   }
 
   async remove(user: User, postId: number) {
