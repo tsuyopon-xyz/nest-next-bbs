@@ -1,8 +1,9 @@
 import { IsString, MaxLength, MinLength } from 'class-validator';
+import { PASSWORD } from './constants';
 
 export class ResetPasswordDto {
   @IsString()
-  @MinLength(8)
-  @MaxLength(72)
+  @MinLength(PASSWORD.MIN)
+  @MaxLength(PASSWORD.MAX)
   password: string;
 }

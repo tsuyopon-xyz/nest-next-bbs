@@ -8,6 +8,7 @@ import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { SendgridModule } from './sendgrid/sendgrid.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { SendgridModule } from './sendgrid/sendgrid.module';
     SendgridModule.register(process.env.SENDGRID_API_KEY),
     AuthModule,
     UsersModule,
+    PostsModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService],

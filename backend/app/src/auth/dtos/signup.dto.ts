@@ -1,13 +1,15 @@
 import { IsEmail, Length, MaxLength, MinLength } from 'class-validator';
+import { PASSWORD, EMAIL, NAME } from './constants';
 
 export class SignUpDto {
-  @Length(1, 20)
+  @Length(NAME.MIN, NAME.MAX)
   name: string;
 
+  @MaxLength(EMAIL.MAX)
   @IsEmail()
   email: string;
 
-  @MinLength(8)
-  @MaxLength(72) // Because of bcrypt specification
+  @MinLength(PASSWORD.MIN)
+  @MaxLength(PASSWORD.MAX) // Because of bcrypt specification
   password: string;
 }
