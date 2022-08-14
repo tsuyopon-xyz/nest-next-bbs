@@ -8,6 +8,7 @@ import {
   UseGuards,
   Request,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -25,15 +26,16 @@ export class PostsController {
 
   @UseGuards(JWTAuthGuard)
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(@Query('cursorId') cursorId?: string, @Query('take') take?: string) {
+    const _cursorId = cursorId ? parseInt(cursorId) : undefined;
+    const _take = take ? parseInt(take) : undefined;
+
+    return this.postsService.findAll(_cursorId, _take);
   }
 
   @UseGuards(JWTAuthGuard)
   @Delete(':id')
   remove(@Request() req, @Param('id', ParseIntPipe) id: number) {
-    console.log({ user: req.user });
-
     return this.postsService.remove(req.user, id);
   }
 }

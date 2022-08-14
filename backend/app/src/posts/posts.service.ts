@@ -8,6 +8,8 @@ import type { User } from 'src/prisma/types';
 import { UsersService } from 'src/users/users.service';
 import { CreatePostDto } from './dto/create-post.dto';
 
+const MAX_TAKE_FOR_FIND_ALL = 50;
+
 @Injectable()
 export class PostsService {
   constructor(
@@ -39,7 +41,7 @@ export class PostsService {
     return post;
   }
 
-  async findAll() {
+  async findAll(cursorId: number, take = 20) {
     const posts = await this.prismaService.post.findMany({
       where: {
         deletedAt: null,
@@ -60,6 +62,12 @@ export class PostsService {
           id: 'desc',
         },
       ],
+
+      // Cursor-based pagination
+      // https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination
+      cursor: cursorId ? { id: cursorId } : undefined,
+      skip: cursorId ? 1 : undefined,
+      take: take > MAX_TAKE_FOR_FIND_ALL ? MAX_TAKE_FOR_FIND_ALL : take,
     });
 
     return posts;
