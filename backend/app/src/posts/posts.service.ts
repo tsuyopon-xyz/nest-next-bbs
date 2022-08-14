@@ -55,6 +55,11 @@ export class PostsService {
           },
         },
       },
+      orderBy: [
+        {
+          id: 'desc',
+        },
+      ],
     });
 
     return posts;
