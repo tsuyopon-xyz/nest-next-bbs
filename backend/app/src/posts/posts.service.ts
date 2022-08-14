@@ -70,7 +70,16 @@ export class PostsService {
       take: take > MAX_TAKE_FOR_FIND_ALL ? MAX_TAKE_FOR_FIND_ALL : take,
     });
 
-    return posts;
+    const total = await this.prismaService.post.count({
+      where: {
+        deletedAt: null,
+      },
+    });
+
+    return {
+      data: posts,
+      total,
+    };
   }
 
   async remove(user: User, postId: number) {
