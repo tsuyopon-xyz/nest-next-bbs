@@ -5,13 +5,24 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import type { User } from 'src/prisma/types';
+import { UsersService } from 'src/users/users.service';
 import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly usersService: UsersService,
+  ) {}
 
   async create(user: User, createPostDto: CreatePostDto) {
+    const prismaUser = await this.usersService.findByEmail(user.email);
+    if (!prismaUser.isEmailConfirmed) {
+      throw new UnauthorizedException(
+        '本登録が完了したユーザーのみ投稿できます',
+      );
+    }
+
     const post = await this.prismaService.post.create({
       data: {
         content: createPostDto.content,
