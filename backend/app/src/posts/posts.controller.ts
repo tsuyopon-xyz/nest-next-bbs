@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -30,9 +31,9 @@ export class PostsController {
 
   @UseGuards(JWTAuthGuard)
   @Delete(':id')
-  remove(@Request() req, @Param('id') id: string) {
+  remove(@Request() req, @Param('id', ParseIntPipe) id: number) {
     console.log({ user: req.user });
 
-    return this.postsService.remove(+id);
+    return this.postsService.remove(req.user, id);
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import type { User } from 'src/prisma/types';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -28,11 +32,31 @@ export class PostsService {
     return `This action returns all posts`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
-  }
+  async remove(user: User, postId: number) {
+    const post = await this.prismaService.post.findFirst({
+      where: {
+        id: postId,
+        deletedAt: null,
+      },
+      select: {
+        authorId: true,
+      },
+    });
+    if (!post) {
+      throw new NotFoundException('投稿は存在しません');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+    if (post.authorId !== user.id) {
+      throw new UnauthorizedException('他の人の投稿は消せません');
+    }
+
+    await this.prismaService.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
   }
 }
