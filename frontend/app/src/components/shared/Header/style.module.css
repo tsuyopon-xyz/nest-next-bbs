@@ -1,0 +1,24 @@
+.navbar {
+  display: flex;
+  margin: 0;
+  padding: 1rem;
+  background-color: teal;
+  color: white;
+}
+
+.navMenu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 1rem;
+}
+
+.navLeftMenu {
+  flex-grow: 1;
+}
+
+.navRightMenu {
+  flex-grow: 1;
+  justify-content: end;
+}
