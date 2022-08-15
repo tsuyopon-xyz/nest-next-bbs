@@ -18,6 +18,7 @@ import { PostsModule } from './posts/posts.module';
           .valid('development', 'test', 'production')
           .required(),
         PORT: Joi.number().required(),
+        ACCESS_ALLOW_ORIGIN: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION: Joi.string().required(),
         JWT_REFRESH_SECRET: Joi.string().required(),
