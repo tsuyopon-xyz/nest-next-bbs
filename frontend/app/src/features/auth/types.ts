@@ -1,3 +1,23 @@
+export interface AuthState {
+  signup: {
+    inProgress: boolean;
+    isSucceeded: boolean;
+    error: SignupResponseError | null;
+  };
+  signin: {
+    inProgress: boolean;
+    error: SigninResponseError | null;
+    accessToken: string | null;
+    refreshToken: string | null;
+    name: string | null;
+    email: string | null;
+  };
+  signout: {
+    inProgress: boolean;
+    error: SignoutResponseError | null;
+  };
+}
+
 export type SigninInput = {
   email: string;
   password: string;
