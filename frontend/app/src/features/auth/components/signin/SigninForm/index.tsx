@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { ChangeEventHandler, FormEventHandler, useState, type FC } from 'react';
 import { useAppDispatch, useAppSelector } from 'src/app/hooks';
 import type { SigninInput } from '../../../types';
@@ -7,7 +6,6 @@ import { signin } from '../../../authSlice';
 export const SigninForm: FC = () => {
   const dispatch = useAppDispatch();
   const signinState = useAppSelector((state) => state.auth.signin);
-  const router = useRouter();
   const [signinInput, setSinginInput] = useState<SigninInput>({
     email: '',
     password: '',
@@ -27,12 +25,6 @@ export const SigninForm: FC = () => {
 
   if (signinState.inProgress) {
     return <p>送信中...</p>;
-  }
-
-  if (signinState.accessToken) {
-    //ログイン済みの場合は、認証後のメインページに飛ばす
-    router.push('/');
-    return <></>;
   }
 
   return (

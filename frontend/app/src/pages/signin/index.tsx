@@ -1,8 +1,19 @@
+import { useRouter } from 'next/router';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useAppSelector } from 'src/app/hooks';
 import { SigninForm } from 'src/features/auth/components/signin/SigninForm';
 
 const SignupPage: NextPage = () => {
+  const router = useRouter();
+  const signinState = useAppSelector((state) => state.auth.signin);
+
+  if (signinState.accessToken) {
+    //ログイン済みの場合は、認証後のメインページに飛ばす
+    router.push('/');
+    return <></>;
+  }
+
   return (
     <div>
       <Head>
