@@ -1,8 +1,12 @@
-import type { FC } from 'react';
-import { ChangeEventHandler, FormEventHandler, useState } from 'react';
+import { ChangeEventHandler, FormEventHandler, useState, type FC } from 'react';
+import { useAppDispatch, useAppSelector } from 'src/app/hooks';
 import type { SignupInput } from '../../../types';
+import { signup } from '../../../authSlice';
 
 export const SignupForm: FC = () => {
+  const dispatch = useAppDispatch();
+  const signupState = useAppSelector((state) => state.auth.signup);
+
   const [signupInput, setSingupInput] = useState<SignupInput>({
     name: '',
     email: '',
@@ -18,62 +22,72 @@ export const SignupForm: FC = () => {
 
   const onSubmitHandler: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
-    console.log(signupInput);
-    try {
-      const res = await fetch('http://localhost:8000/auth/signup', {
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(signupInput),
-      });
-      if (res.status === 201) {
-        console.log('作成成功');
-      } else {
-        console.log('作成失敗 : ', res.status);
-      }
-    } catch (error) {
-      console.error('error : ', error);
-    }
+    dispatch(signup(signupInput));
   };
 
+  if (signupState.inProgress) {
+    return <p>送信中...</p>;
+  }
+
+  if (signupState.isSucceeded) {
+    return (
+      <>
+        <p>仮登録に成功しました。</p>
+        <p>
+          本登録を完了するために、登録したメールのメールBoxをご確認ください。
+        </p>
+      </>
+    );
+  }
+
+  const errorMessages = !signupState.error
+    ? []
+    : Array.isArray(signupState.error.message)
+    ? signupState.error.message
+    : [signupState.error.message];
+
   return (
-    <form method="post" onSubmit={onSubmitHandler}>
-      <div>
-        <label htmlFor="name">名前</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={signupInput.name}
-          onChange={onChangeHandler}
-        />
-      </div>
-      <div>
-        <label htmlFor="email">Email</label>
-        <input
-          type="text"
-          id="email"
-          name="email"
-          value={signupInput.email}
-          onChange={onChangeHandler}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">パスワード</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={signupInput.password}
-          onChange={onChangeHandler}
-        />
-      </div>
-      <div>
-        <input type="submit" value="新規作成" />
-      </div>
-    </form>
+    <>
+      <ul>
+        {errorMessages.map((text, index) => {
+          return <li key={index}>{text}</li>;
+        })}
+      </ul>
+      <form method="post" onSubmit={onSubmitHandler}>
+        <div>
+          <label htmlFor="name">名前</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={signupInput.name}
+            onChange={onChangeHandler}
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            type="text"
+            id="email"
+            name="email"
+            value={signupInput.email}
+            onChange={onChangeHandler}
+          />
+        </div>
+        <div>
+          <label htmlFor="password">パスワード</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={signupInput.password}
+            onChange={onChangeHandler}
+          />
+        </div>
+        <div>
+          <input type="submit" value="新規作成" />
+        </div>
+      </form>
+    </>
   );
 };
