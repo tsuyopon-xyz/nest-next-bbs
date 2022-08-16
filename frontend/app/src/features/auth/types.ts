@@ -9,6 +9,10 @@ export type SignupInput = {
   password: string;
 };
 
+export type SignoutInput = {
+  refreshToken: string;
+};
+
 // "undefined" means "Success", Because Status code 201 does not have any data in the response body.
 export type SignupResponseSuccess = undefined;
 export type SignupResponseError = {
@@ -29,3 +33,10 @@ export type SigninResponseError = {
   statusCode: number;
 };
 export type SigninResponse = SigninResponseSuccess | SigninResponseError;
+
+export type SignoutResponseSuccess = undefined;
+export type SignoutResponseError = {
+  message: string;
+  statusCode: number;
+};
+export type SignoutResponse = SignoutResponseSuccess | SignoutResponseError;
