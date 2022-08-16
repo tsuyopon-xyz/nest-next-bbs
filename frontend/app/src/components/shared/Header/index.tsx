@@ -20,17 +20,20 @@ export const Header: FC = () => {
         </ul>
         <ul className={`${styles.navMenu} ${styles.navRightMenu}`}>
           {signinState.accessToken ? (
-            <li>
-              <Link href="">
-                <a
-                  onClick={() => {
-                    dispatch(signout());
-                  }}
-                >
-                  ログアウト
-                </a>
-              </Link>
-            </li>
+            <>
+              <li>（ユーザー名 : {signinState.name}）</li>
+              <li>
+                <Link href="">
+                  <a
+                    onClick={() => {
+                      dispatch(signout());
+                    }}
+                  >
+                    ログアウト
+                  </a>
+                </Link>
+              </li>
+            </>
           ) : (
             <>
               <li>
