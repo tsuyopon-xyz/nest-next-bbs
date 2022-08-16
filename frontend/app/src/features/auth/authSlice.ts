@@ -3,22 +3,25 @@ import {
   createAsyncThunk,
   ActionReducerMapBuilder,
 } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
 import type {
-  SignupResponseSuccess,
   SignupResponseError,
   SignupResponse,
   SignupInput,
+  SigninResponseError,
+  SigninResponse,
+  SigninInput,
 } from './types';
-import { signup as _signup } from './api/signup';
+import { signup as _signup, signin as _signin } from './api';
 
 export interface AuthState {
   signup: {
     inProgress: boolean;
     isSucceeded: boolean;
-    error: null | SignupResponseError;
+    error: SignupResponseError | null;
   };
   signin: {
+    inProgress: boolean;
+    error: SigninResponseError | null;
     accessToken: string | null;
     refreshToken: string | null;
     name: string | null;
@@ -28,6 +31,8 @@ export interface AuthState {
 
 const initialState: AuthState = {
   signin: {
+    inProgress: false,
+    error: null,
     accessToken: null,
     refreshToken: null,
     name: null,
@@ -46,6 +51,7 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     buildSignupExtraReducer(builder);
+    buildSigninExtraReducer(builder);
   },
 });
 
@@ -56,10 +62,16 @@ export const signup = createAsyncThunk<SignupResponse, SignupInput>(
   }
 );
 
+export const signin = createAsyncThunk<SigninResponse, SigninInput>(
+  `${authSlice.name}/signin`,
+  async (input) => {
+    return _signin(input);
+  }
+);
+
 export default authSlice.reducer;
 
 // createSlice内のextraReducerが長くなるため、createAsyncThunkの機能別にextraReducer処理を分ける
-
 const buildSignupExtraReducer = (
   builder: ActionReducerMapBuilder<AuthState>
 ) => {
@@ -86,6 +98,48 @@ const buildSignupExtraReducer = (
         error: name ?? '例外エラー',
         message: message ?? '例外エラー',
         statusCode: code ? parseInt(code) : 0,
+      };
+    });
+};
+
+const buildSigninExtraReducer = (
+  builder: ActionReducerMapBuilder<AuthState>
+) => {
+  builder
+    .addCase(signin.pending, (state) => {
+      state.signin.inProgress = true;
+    })
+    .addCase(signin.fulfilled, (state, action) => {
+      // 型ガードで SigninResponseSuccess / SigninResponseError を判断
+      if ('accessToken' in action.payload) {
+        state.signin = {
+          error: null,
+          inProgress: false,
+          ...action.payload,
+        };
+      } else {
+        state.signin = {
+          error: action.payload,
+          inProgress: false,
+          accessToken: null,
+          refreshToken: null,
+          name: null,
+          email: null,
+        };
+      }
+    })
+    .addCase(signin.rejected, (state, action) => {
+      const { message, code } = action.error;
+      state.signin = {
+        error: {
+          message: message ?? '例外エラー',
+          statusCode: code ? parseInt(code) : 0,
+        },
+        inProgress: false,
+        accessToken: null,
+        refreshToken: null,
+        name: null,
+        email: null,
       };
     });
 };

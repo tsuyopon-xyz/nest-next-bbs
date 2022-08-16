@@ -17,3 +17,15 @@ export type SignupResponseError = {
   statusCode: number;
 };
 export type SignupResponse = SignupResponseSuccess | SignupResponseError;
+
+export type SigninResponseSuccess = {
+  accessToken: string;
+  refreshToken: string;
+  name: string;
+  email: string;
+};
+export type SigninResponseError = {
+  message: string;
+  statusCode: number;
+};
+export type SigninResponse = SigninResponseSuccess | SigninResponseError;
