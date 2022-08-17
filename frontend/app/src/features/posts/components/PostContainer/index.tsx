@@ -1,9 +1,9 @@
 import { useState, type FC } from 'react';
-import { useAppDispatch, useAppSelector } from 'src/app/hooks';
+import { useAppSelector } from 'src/app/hooks';
 import { useFindPostsQuery } from 'src/features/posts/api/posts';
+import { PostList } from '../PostList';
 
 export const PostContainer: FC = () => {
-  const dispatch = useAppDispatch();
   const { accessToken } = useAppSelector((state) => state.auth.signin);
   const [cursorId, setCursorId] = useState<number | undefined>();
 
@@ -40,7 +40,7 @@ export const PostContainer: FC = () => {
   return (
     <div>
       <p>トータル {data.total}件</p>
-      <pre>{JSON.stringify(data.data, null, 4)}</pre>
+      <PostList posts={data.data} />
     </div>
   );
 };
