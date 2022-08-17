@@ -16,7 +16,7 @@ export interface PostsState {
 }
 
 export type FindRequestInput = {
-  cursorId?: number;
+  page?: number;
   take?: number;
   accessToken: string;
 };

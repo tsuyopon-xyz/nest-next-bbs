@@ -17,11 +17,11 @@ export const postsApi = createApi({
   }),
   endpoints: (builder) => ({
     findPosts: builder.query<FindResponseSuccess, FindRequestInput>({
-      query: ({ cursorId, take, accessToken }) => {
+      query: ({ page, take, accessToken }) => {
         return {
           url: 'posts',
           params: {
-            cursorId,
+            page,
             take,
           },
           headers: {
