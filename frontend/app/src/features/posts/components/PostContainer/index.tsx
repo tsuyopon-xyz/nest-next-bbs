@@ -1,4 +1,5 @@
-import { useState, type FC, type MouseEventHandler } from 'react';
+import { useRouter } from 'next/router';
+import { useState, type FC } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useAppSelector } from 'src/app/hooks';
 import { useFindPostsQuery } from 'src/features/posts/api/posts';
@@ -6,17 +7,20 @@ import { PostList } from '../PostList';
 import paginatorStyles from './paginator.module.css';
 
 const TAKE = 10;
-const DEFAULT_PAGE_INDEX = 0;
+const DEFAULT_PAGE_NUMBER = 1;
 
 export const PostContainer: FC = () => {
+  const router = useRouter();
+  const page = isNaN(parseInt(router.query.page as string))
+    ? DEFAULT_PAGE_NUMBER
+    : parseInt(router.query.page as string);
   const { accessToken } = useAppSelector((state) => state.auth.signin);
-  const [pageIndex, setPageIndex] = useState(DEFAULT_PAGE_INDEX);
 
   // src/pages/index.tsx内で、signinしていなかったら、このコンポーネントは使われないため、
   // signinState.accessTokenはある前提でこのコンポーネントが読み込まれている
   const { data, error, isFetching, isLoading } = useFindPostsQuery({
     accessToken: accessToken as string,
-    page: pageIndex + 1,
+    page: page,
     take: TAKE,
   });
 
@@ -50,10 +54,15 @@ export const PostContainer: FC = () => {
 
       {/* https://github.com/AdeleD/react-paginate#props */}
       <ReactPaginate
-        forcePage={pageIndex}
+        forcePage={page - 1}
         pageCount={Math.ceil(data.total / TAKE)}
         onPageChange={(selectedItem) => {
-          setPageIndex(selectedItem.selected);
+          router.push({
+            pathname: '/',
+            query: {
+              page: selectedItem.selected + 1,
+            },
+          });
         }}
         pageRangeDisplayed={3}
         breakLabel="..."
