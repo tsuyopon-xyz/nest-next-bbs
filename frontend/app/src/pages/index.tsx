@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useAppSelector } from 'src/app/hooks';
+import { PostContainer } from 'src/features/posts/components/PostContainer';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1>トップページ</h1>
+      <PostContainer />
     </div>
   );
 };

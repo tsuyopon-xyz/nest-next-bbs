@@ -33,7 +33,12 @@ export class PostsService {
       select: {
         id: true,
         content: true,
-        authorId: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         createdAt: true,
       },
     });
@@ -41,7 +46,10 @@ export class PostsService {
     return post;
   }
 
-  async findAll(cursorId: number, take = 20) {
+  async findAll(page = 1, take = 20) {
+    const _page = page < 1 ? 1 : page;
+    const _take = take > MAX_TAKE_FOR_FIND_ALL ? MAX_TAKE_FOR_FIND_ALL : take;
+
     const posts = await this.prismaService.post.findMany({
       where: {
         deletedAt: null,
@@ -63,11 +71,8 @@ export class PostsService {
         },
       ],
 
-      // Cursor-based pagination
-      // https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination
-      cursor: cursorId ? { id: cursorId } : undefined,
-      skip: cursorId ? 1 : undefined,
-      take: take > MAX_TAKE_FOR_FIND_ALL ? MAX_TAKE_FOR_FIND_ALL : take,
+      skip: (_page - 1) * _take,
+      take: _take,
     });
 
     const total = await this.prismaService.post.count({
@@ -100,12 +105,23 @@ export class PostsService {
       throw new UnauthorizedException('他の人の投稿は消せません');
     }
 
-    await this.prismaService.post.update({
+    return this.prismaService.post.update({
       where: {
         id: postId,
       },
       data: {
         deletedAt: new Date(),
+      },
+      select: {
+        id: true,
+        content: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        createdAt: true,
       },
     });
   }

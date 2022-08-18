@@ -26,11 +26,11 @@ export class PostsController {
 
   @UseGuards(JWTAuthGuard)
   @Get()
-  findAll(@Query('cursorId') cursorId?: string, @Query('take') take?: string) {
-    const _cursorId = cursorId ? parseInt(cursorId) : undefined;
+  findAll(@Query('page') page?: string, @Query('take') take?: string) {
+    const _page = page ? parseInt(page) : undefined;
     const _take = take ? parseInt(take) : undefined;
 
-    return this.postsService.findAll(_cursorId, _take);
+    return this.postsService.findAll(_page, _take);
   }
 
   @UseGuards(JWTAuthGuard)

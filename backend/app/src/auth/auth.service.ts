@@ -36,6 +36,7 @@ export class AuthService {
     await this.updateHashedRefreshToken(user, tokens.refreshToken);
 
     return {
+      id: user.id,
       name: user.name,
       email: user.email,
       ...tokens,
@@ -148,6 +149,7 @@ export class AuthService {
 
     return {
       ...tokens,
+      id: user.id,
       name: user.name,
       email: user.email,
     };

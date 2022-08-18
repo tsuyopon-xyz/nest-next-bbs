@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  gap: 20px 6px;
+  list-style: none;
+  gap: 2rem;
+}
+
+.pageItem,
+.pageLink {
+  background-color: #eee;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 30px;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  height: 40px;
+  width: 40px;
+}
+
+.pageItem:hover,
+.pageLink:hover {
+  background-color: #aaa;
+}
+
+.active {
+  color: red;
+}
+
+.next,
+.previous {
+  display: none;
+}
