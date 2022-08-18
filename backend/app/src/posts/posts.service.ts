@@ -3,6 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { encode } from 'html-entities';
 import { PrismaService } from 'src/prisma/prisma.service';
 import type { User } from 'src/prisma/types';
 import { UsersService } from 'src/users/users.service';
@@ -27,7 +28,7 @@ export class PostsService {
 
     const post = await this.prismaService.post.create({
       data: {
-        content: createPostDto.content,
+        content: encode(createPostDto.content),
         authorId: user.id,
       },
       select: {
