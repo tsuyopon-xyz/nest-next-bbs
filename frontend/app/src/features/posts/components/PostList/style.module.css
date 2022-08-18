@@ -3,6 +3,7 @@
   border: 1px solid #000;
   padding: 1rem;
   overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .postItemContainer:not(:first-child) {
