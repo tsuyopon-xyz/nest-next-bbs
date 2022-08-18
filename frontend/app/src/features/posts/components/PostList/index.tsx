@@ -3,6 +3,7 @@ import reactStringReplace from 'react-string-replace';
 import { useAppSelector } from 'src/app/hooks';
 import type { Post } from '../../types';
 import { useRemovePostMutation } from 'src/features/posts/api/posts';
+import { formatDiffDateOnPost } from 'src/utils/date';
 import styles from './style.module.css';
 
 type PostListProps = {
@@ -42,6 +43,11 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
     <>
       <div className={styles.postItemContainer}>
         {error && <p>{JSON.stringify(error)}</p>}
+        <div>
+          <div>{post.author.name}</div>
+          <div>{formatDiffDateOnPost(post.createdAt)}</div>
+        </div>
+        <hr />
         <div>{replaceHttpLinkTextToLinkable(post.content)}</div>
         <div className={styles.buttonArea}>
           {userId === post.author.id && (

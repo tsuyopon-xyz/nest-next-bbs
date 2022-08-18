@@ -14,7 +14,7 @@ export const Header: FC = () => {
         <ul className={`${styles.navMenu}`}>
           <li>
             <Link href="/">
-              <a>Home</a>
+              <a>Web白熱掲示板</a>
             </Link>
           </li>
         </ul>
