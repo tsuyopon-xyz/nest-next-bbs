@@ -1,9 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type {
   FindRequestInput,
-  FindResponse,
   FindResponseSuccess,
+  CreateRequestInput,
+  CreateResponseSuccess,
 } from '../types';
+
+const END_POINT = 'posts';
 
 export const postsApi = createApi({
   reducerPath: 'postsApi',
@@ -19,7 +22,7 @@ export const postsApi = createApi({
     findPosts: builder.query<FindResponseSuccess, FindRequestInput>({
       query: ({ page, take, accessToken }) => {
         return {
-          url: 'posts',
+          url: END_POINT,
           params: {
             page,
             take,
@@ -30,7 +33,21 @@ export const postsApi = createApi({
         };
       },
     }),
+    createPost: builder.mutation<CreateResponseSuccess, CreateRequestInput>({
+      query: ({ content, accessToken }) => {
+        return {
+          method: 'POST',
+          url: END_POINT,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: {
+            content,
+          },
+        };
+      },
+    }),
   }),
 });
 
-export const { useFindPostsQuery } = postsApi;
+export const { useFindPostsQuery, useCreatePostMutation } = postsApi;

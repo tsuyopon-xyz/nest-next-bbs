@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router';
-import { useState, type FC } from 'react';
+import type { FC } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useAppSelector } from 'src/app/hooks';
 import { useFindPostsQuery } from 'src/features/posts/api/posts';
 import { PostList } from '../PostList';
+import { PostForm } from '../PostForm';
 import paginatorStyles from './paginator.module.css';
 
 const TAKE = 10;
@@ -14,21 +15,17 @@ export const PostContainer: FC = () => {
   const page = isNaN(parseInt(router.query.page as string))
     ? DEFAULT_PAGE_NUMBER
     : parseInt(router.query.page as string);
-  const { accessToken } = useAppSelector((state) => state.auth.signin);
 
   // src/pages/index.tsx内で、signinしていなかったら、このコンポーネントは使われないため、
   // signinState.accessTokenはある前提でこのコンポーネントが読み込まれている
+  const accessToken = useAppSelector(
+    (state) => state.auth.signin.accessToken
+  ) as string;
+
   const { data, error, isFetching, isLoading } = useFindPostsQuery({
     accessToken: accessToken as string,
     page: page,
     take: TAKE,
-  });
-
-  console.log({
-    isFetching,
-    isLoading,
-    data,
-    error,
   });
 
   if (isFetching) {
@@ -49,7 +46,9 @@ export const PostContainer: FC = () => {
 
   return (
     <div>
+      <PostForm />
       <p>トータル {data.total}件</p>
+
       <PostList posts={data.data} />
 
       {/* https://github.com/AdeleD/react-paginate#props */}

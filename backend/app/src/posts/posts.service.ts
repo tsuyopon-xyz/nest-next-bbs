@@ -33,7 +33,12 @@ export class PostsService {
       select: {
         id: true,
         content: true,
-        authorId: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         createdAt: true,
       },
     });
