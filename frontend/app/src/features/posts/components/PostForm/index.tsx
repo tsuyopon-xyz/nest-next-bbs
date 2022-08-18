@@ -1,5 +1,4 @@
 import { ChangeEventHandler, FormEventHandler, useState, type FC } from 'react';
-import { encode } from 'html-entities';
 import { useAppSelector } from 'src/app/hooks';
 import { useCreatePostMutation } from 'src/features/posts/api/posts';
 import { CreateRequestInput } from '../../types';
@@ -43,10 +42,7 @@ export const PostForm: FC = () => {
 
   const canPost = () => {
     if (requestInput.content.trim().length === 0) return false;
-    if (
-      MAX_CONTENT_LENGTH < calculateEncodedContentLength(requestInput.content)
-    )
-      return false;
+    // if (MAX_CONTENT_LENGTH < requestInput.content.length) return false;
     if (isLoading) return false;
 
     return true;
@@ -55,10 +51,6 @@ export const PostForm: FC = () => {
   return (
     <>
       {error ? <p>{JSON.stringify(error)}</p> : null}
-      <p>
-        ※HTMLで使われる特殊文字（「&lt;, &gt;, &quot; ,
-        &apos;」など）はエスケープ処理しています（文字数が多くカウントされる）
-      </p>
       <form method="post" onSubmit={onSubmitHandler}>
         <textarea
           className={styles.textArea}
@@ -69,16 +61,11 @@ export const PostForm: FC = () => {
         ></textarea>
         <div className={styles.belowTextAreaContainer}>
           <span>
-            {calculateEncodedContentLength(requestInput.content)}/
-            {MAX_CONTENT_LENGTH}
+            {requestInput.content.length}/{MAX_CONTENT_LENGTH}
           </span>
           <input type="submit" value="投稿する" disabled={!canPost()} />
         </div>
       </form>
     </>
   );
-};
-
-const calculateEncodedContentLength = (text: string) => {
-  return encode(text).length;
 };

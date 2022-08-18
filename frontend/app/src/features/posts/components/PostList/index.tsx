@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import { decode } from 'html-entities';
+import { useState, type FC } from 'react';
 import { useAppSelector } from 'src/app/hooks';
 import type { Post } from '../../types';
 import { useRemovePostMutation } from 'src/features/posts/api/posts';
@@ -43,7 +42,7 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
       <div className={styles.postItemContainer}>
         {error && <p>{JSON.stringify(error)}</p>}
         <div>
-          {post.id} : {decode(post.content)}
+          {post.id} : {post.content}
         </div>
         <div className={styles.buttonArea}>
           {userId === post.author.id && (
