@@ -15,7 +15,27 @@
   margin-top: 1rem;
 }
 
-.buttonArea {
+.postItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.postAuthorName {
+  color: #333;
+  font-weight: 800;
+}
+
+.postTime {
+  color: #777;
+}
+
+.postItemContent {
+  margin-top: 1rem;
+}
+
+.postItemFooter {
   display: block;
   text-align: right;
   margin-top: 1rem;

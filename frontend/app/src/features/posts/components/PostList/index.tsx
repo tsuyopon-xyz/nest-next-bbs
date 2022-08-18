@@ -43,13 +43,16 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
     <>
       <div className={styles.postItemContainer}>
         {error && <p>{JSON.stringify(error)}</p>}
-        <div>
-          <div>{post.author.name}</div>
-          <div>{formatDiffDateOnPost(post.createdAt)}</div>
+        <div className={styles.postItemHeader}>
+          <div className={styles.postAuthorName}>{post.author.name}</div>
+          <div className={styles.postTime}>
+            {formatDiffDateOnPost(post.createdAt)}
+          </div>
         </div>
-        <hr />
-        <div>{replaceHttpLinkTextToLinkable(post.content)}</div>
-        <div className={styles.buttonArea}>
+        <div className={styles.postItemContent}>
+          {replaceHttpLinkTextToLinkable(post.content)}
+        </div>
+        <div className={styles.postItemFooter}>
           {userId === post.author.id && (
             <button onClick={onClickRemoveButton} disabled={isLoading}>
               削除
