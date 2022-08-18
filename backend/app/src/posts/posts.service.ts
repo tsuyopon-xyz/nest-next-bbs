@@ -105,12 +105,23 @@ export class PostsService {
       throw new UnauthorizedException('他の人の投稿は消せません');
     }
 
-    await this.prismaService.post.update({
+    return this.prismaService.post.update({
       where: {
         id: postId,
       },
       data: {
         deletedAt: new Date(),
+      },
+      select: {
+        id: true,
+        content: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        createdAt: true,
       },
     });
   }

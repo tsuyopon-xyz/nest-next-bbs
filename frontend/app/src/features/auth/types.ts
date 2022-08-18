@@ -7,6 +7,7 @@ export interface AuthState {
   signin: {
     inProgress: boolean;
     error: SigninResponseError | null;
+    id: number | null;
     accessToken: string | null;
     refreshToken: string | null;
     name: string | null;
@@ -45,6 +46,7 @@ export type SignupResponse = SignupResponseSuccess | SignupResponseError;
 export type SigninResponseSuccess = {
   accessToken: string;
   refreshToken: string;
+  id: number;
   name: string;
   email: string;
 };

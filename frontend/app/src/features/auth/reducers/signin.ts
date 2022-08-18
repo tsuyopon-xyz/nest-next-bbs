@@ -33,6 +33,7 @@ export const buildSigninExtraReducer = (
           inProgress: false,
           accessToken: null,
           refreshToken: null,
+          id: null,
           name: null,
           email: null,
         };
@@ -48,6 +49,7 @@ export const buildSigninExtraReducer = (
         inProgress: false,
         accessToken: null,
         refreshToken: null,
+        id: null,
         name: null,
         email: null,
       };

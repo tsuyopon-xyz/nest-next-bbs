@@ -4,17 +4,18 @@ import type {
   FindResponseSuccess,
   CreateRequestInput,
   CreateResponseSuccess,
-  Post,
+  RemoveRequestInput,
+  RemoveResponseSuccess,
 } from '../types';
 
-const END_POINT = 'posts';
+const POSTS_END_POINT = 'posts';
 const REVALIDATION_TAG_TYPE = 'Posts';
 const REVALIDATION_TAG_ID_FOR_LIST = 'LIST';
 
 export const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_ENDPOINT,
+    baseUrl: process.env.NEXT_PUBLIC_API_ENDPOINT + POSTS_END_POINT,
     mode: 'cors',
     credentials: 'include',
     headers: {
@@ -26,7 +27,7 @@ export const postsApi = createApi({
     findPosts: builder.query<FindResponseSuccess, FindRequestInput>({
       query: ({ page, take, accessToken }) => {
         return {
-          url: END_POINT,
+          url: '',
           params: {
             page,
             take,
@@ -58,7 +59,7 @@ export const postsApi = createApi({
       query: ({ content, accessToken }) => {
         return {
           method: 'POST',
-          url: END_POINT,
+          url: '',
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -71,7 +72,29 @@ export const postsApi = createApi({
         { type: REVALIDATION_TAG_TYPE, id: REVALIDATION_TAG_ID_FOR_LIST },
       ],
     }),
+    removePost: builder.mutation<RemoveResponseSuccess, RemoveRequestInput>({
+      query: ({ id, accessToken }) => {
+        return {
+          method: 'DELETE',
+          url: '/' + id,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+      },
+      invalidatesTags: (result, error, { id }) => {
+        if (result) {
+          return [{ type: REVALIDATION_TAG_TYPE, id }];
+        }
+
+        return [{ type: REVALIDATION_TAG_TYPE, id: 'ERROR' }];
+      },
+    }),
   }),
 });
 
-export const { useFindPostsQuery, useCreatePostMutation } = postsApi;
+export const {
+  useFindPostsQuery,
+  useCreatePostMutation,
+  useRemovePostMutation,
+} = postsApi;
