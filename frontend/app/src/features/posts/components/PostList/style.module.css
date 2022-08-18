@@ -6,6 +6,11 @@
   white-space: pre-wrap;
 }
 
+.postItemContainer a {
+  color: teal;
+  text-decoration: underline;
+}
+
 .postItemContainer:not(:first-child) {
   margin-top: 1rem;
 }

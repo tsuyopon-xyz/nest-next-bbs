@@ -1,4 +1,5 @@
-import { useState, type FC } from 'react';
+import type { FC } from 'react';
+import reactStringReplace from 'react-string-replace';
 import { useAppSelector } from 'src/app/hooks';
 import type { Post } from '../../types';
 import { useRemovePostMutation } from 'src/features/posts/api/posts';
@@ -41,9 +42,7 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
     <>
       <div className={styles.postItemContainer}>
         {error && <p>{JSON.stringify(error)}</p>}
-        <div>
-          {post.id} : {post.content}
-        </div>
+        <div>{replaceHttpLinkTextToLinkable(post.content)}</div>
         <div className={styles.buttonArea}>
           {userId === post.author.id && (
             <button onClick={onClickRemoveButton} disabled={isLoading}>
@@ -54,4 +53,13 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
       </div>
     </>
   );
+};
+
+// https://github.com/iansinnott/react-string-replace#multiple-replacements-on-a-single-string
+const replaceHttpLinkTextToLinkable = (text: string) => {
+  return reactStringReplace(text, /(https?:\/\/\S+)/g, (match, i) => (
+    <a key={match + i} href={match} target="_blank" rel="noreferrer">
+      {match}
+    </a>
+  ));
 };
