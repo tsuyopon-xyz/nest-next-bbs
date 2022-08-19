@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -26,7 +27,11 @@ export class PostsController {
 
   @UseGuards(JWTAuthGuard)
   @Get()
-  findAll(@Query('page') page?: string, @Query('take') take?: string) {
+  findAll(
+    @Request() req: ExpressRequest,
+    @Query('page') page?: string,
+    @Query('take') take?: string,
+  ) {
     const _page = page ? parseInt(page) : undefined;
     const _take = take ? parseInt(take) : undefined;
 
