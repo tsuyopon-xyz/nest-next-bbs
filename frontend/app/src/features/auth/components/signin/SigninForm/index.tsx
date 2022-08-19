@@ -7,8 +7,8 @@ export const SigninForm: FC = () => {
   const dispatch = useAppDispatch();
   const signinState = useAppSelector((state) => state.auth.signin);
   const [signinInput, setSinginInput] = useState<SigninInput>({
-    email: 'tsuyoshi4business+3@gmail.com',
-    password: 'test1234',
+    email: '',
+    password: '',
   });
 
   const onChangeHandler: ChangeEventHandler<HTMLInputElement> = (event) => {

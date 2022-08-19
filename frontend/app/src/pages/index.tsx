@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useEffect } from 'react';
 import { useAppSelector } from 'src/app/hooks';
 import { PostContainer } from 'src/features/posts/components/PostContainer';
 
@@ -8,9 +9,15 @@ const Home: NextPage = () => {
   const router = useRouter();
   const signinState = useAppSelector((state) => state.auth.signin);
 
+  useEffect(() => {
+    if (router.isReady && !signinState.accessToken) {
+      router.push('/signin');
+    }
+  }, [router, signinState]);
+
   if (!signinState.accessToken) {
-    //ログイン済みの場合は、認証後のメインページに飛ばす
-    router.push('/signin');
+    // 未ログインの時は、router.isReadyになるまでは画面に何も表示させないようにする
+    // その後、ログインページにリダイレクトさせる（useEffect内のコードを参照）
     return <></>;
   }
 

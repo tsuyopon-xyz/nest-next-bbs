@@ -8,6 +8,7 @@ const initialState: AuthState = {
   signin: {
     inProgress: false,
     error: null,
+    id: null,
     accessToken: null,
     refreshToken: null,
     name: null,
