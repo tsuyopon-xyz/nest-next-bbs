@@ -7,6 +7,7 @@ import type {
   RemoveRequestInput,
   RemoveResponseSuccess,
 } from '../types';
+import type { RootState } from 'src/app/store';
 
 const POSTS_END_POINT = 'posts';
 const REVALIDATION_TAG_TYPE = 'Posts';
@@ -16,6 +17,17 @@ export const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_ENDPOINT + POSTS_END_POINT,
+    prepareHeaders(headers, api) {
+      const state = api.getState() as RootState;
+      const signinState = state.auth.signin;
+      const accessToken = signinState.accessToken;
+
+      if (accessToken) {
+        headers.append('Authorization', `Bearer ${accessToken}`);
+      }
+
+      return headers;
+    },
     mode: 'cors',
     credentials: 'include',
     headers: {
@@ -25,15 +37,12 @@ export const postsApi = createApi({
   tagTypes: [REVALIDATION_TAG_TYPE],
   endpoints: (builder) => ({
     findPosts: builder.query<FindResponseSuccess, FindRequestInput>({
-      query: ({ page, take, accessToken }) => {
+      query: ({ page, take }) => {
         return {
           url: '',
           params: {
             page,
             take,
-          },
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
           },
         };
       },
@@ -56,13 +65,10 @@ export const postsApi = createApi({
       },
     }),
     createPost: builder.mutation<CreateResponseSuccess, CreateRequestInput>({
-      query: ({ content, accessToken }) => {
+      query: ({ content }) => {
         return {
           method: 'POST',
           url: '',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
           body: {
             content,
           },
@@ -73,13 +79,10 @@ export const postsApi = createApi({
       ],
     }),
     removePost: builder.mutation<RemoveResponseSuccess, RemoveRequestInput>({
-      query: ({ id, accessToken }) => {
+      query: ({ id }) => {
         return {
           method: 'DELETE',
           url: '/' + id,
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
         };
       },
       invalidatesTags: (result, error, { id }) => {
