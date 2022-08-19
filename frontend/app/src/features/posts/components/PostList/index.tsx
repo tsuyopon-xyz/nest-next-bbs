@@ -26,15 +26,12 @@ export const PostList: FC<PostListProps> = ({ posts }) => {
 const PostItem: FC<PostItemProps> = ({ post }) => {
   // src/pages/index.tsx内で、signinしていなかったら、このコンポーネントは使われないため、
   // signinState.accessTokenはある前提でこのコンポーネントが読み込まれている
-  const { accessToken, id: userId } = useAppSelector(
-    (state) => state.auth.signin
-  );
+  const { id: userId } = useAppSelector((state) => state.auth.signin);
 
-  const [removePost, { error, isLoading, isSuccess }] = useRemovePostMutation();
+  const [removePost, { error, isLoading }] = useRemovePostMutation();
 
   const onClickRemoveButton = () => {
     removePost({
-      accessToken: accessToken as string,
       id: post.id,
     });
   };

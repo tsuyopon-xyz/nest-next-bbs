@@ -8,8 +8,6 @@ export interface AuthState {
     inProgress: boolean;
     error: SigninResponseError | null;
     id: number | null;
-    accessToken: string | null;
-    refreshToken: string | null;
     name: string | null;
     email: string | null;
   };
@@ -44,8 +42,6 @@ export type SignupResponseError = {
 export type SignupResponse = SignupResponseSuccess | SignupResponseError;
 
 export type SigninResponseSuccess = {
-  accessToken: string;
-  refreshToken: string;
   id: number;
   name: string;
   email: string;
@@ -62,3 +58,5 @@ export type SignoutResponseError = {
   statusCode: number;
 };
 export type SignoutResponse = SignoutResponseSuccess | SignoutResponseError;
+
+export type RefreshTokenResponse = SigninResponse;

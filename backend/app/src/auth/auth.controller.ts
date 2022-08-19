@@ -2,12 +2,12 @@ import {
   Body,
   Controller,
   Get,
-  Headers,
   Post,
   Query,
-  Request,
+  Req,
   Res,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
@@ -16,7 +16,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignUpDto } from './dtos/signup.dto';
 import { RequestPasswordResetDto } from './dtos/request-password-reset.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
-import { Response } from 'express';
+import { Response as ExpressResponse } from 'express';
+import type { RefreshTokenResponse, SigninResponse } from './types';
 
 @Controller('auth')
 export class AuthController {
@@ -29,30 +30,66 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  async signin(@Request() req) {
-    return this.authService.signin(req.user);
+  async signin(@Req() req, @Res() res: ExpressResponse<SigninResponse>) {
+    const { accessToken, refreshToken, ...rest } =
+      await this.authService.signin(req.user);
+
+    res.cookie(process.env.COOKIE_JWT_KEY, accessToken, {
+      httpOnly: true,
+      signed: true,
+    });
+    res.cookie(process.env.COOKIE_REFRESH_JWT_KEY, refreshToken, {
+      httpOnly: true,
+      signed: true,
+    });
+
+    return res.json({
+      ...rest,
+    });
   }
 
   @UseGuards(JwtRefreshAuthGuard)
   @Post('signout')
-  async signout(@Request() req) {
-    return this.authService.signout(req.user);
+  async signout(@Res() res: ExpressResponse<undefined>) {
+    res.clearCookie(process.env.COOKIE_JWT_KEY);
+    res.clearCookie(process.env.COOKIE_REFRESH_JWT_KEY);
+
+    res.status(HttpStatus.OK).json();
   }
 
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh-token')
-  async refreshToken(@Request() req, @Headers('authorization') authorization) {
-    return this.authService.refreshToken(req.user, authorization);
-  }
+  async refreshToken(
+    @Req() req,
+    @Res() res: ExpressResponse<RefreshTokenResponse>,
+  ) {
+    const refreshToken = req.signedCookies[process.env.COOKIE_REFRESH_JWT_KEY];
 
-  @UseGuards(JWTAuthGuard)
-  @Get('profile')
-  async getProfile(@Request() req) {
-    return req.user;
+    const {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      ...rest
+    } = await this.authService.refreshToken(req.user, refreshToken);
+
+    res.cookie(process.env.COOKIE_JWT_KEY, newAccessToken, {
+      httpOnly: true,
+      signed: true,
+    });
+    res.cookie(process.env.COOKIE_REFRESH_JWT_KEY, newRefreshToken, {
+      httpOnly: true,
+      signed: true,
+    });
+
+    return res.json({
+      ...rest,
+    });
   }
 
   @Get('confirm-email')
-  async confirmEmail(@Res() res: Response, @Query('token') token: string) {
+  async confirmEmail(
+    @Res() res: ExpressResponse,
+    @Query('token') token: string,
+  ) {
     try {
       const email = await this.authService.decodeConfirmationToken(token);
       await this.authService.confirmEmail(email);
@@ -70,7 +107,7 @@ export class AuthController {
 
   @UseGuards(JWTAuthGuard)
   @Post('reset-password')
-  async resetPassword(@Request() req, @Body() body: ResetPasswordDto) {
+  async resetPassword(@Req() req, @Body() body: ResetPasswordDto) {
     await this.authService.resetPassword(req.user.id, body.password);
   }
 }

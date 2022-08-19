@@ -13,7 +13,6 @@ export type Post = {
 export type FindRequestInput = {
   page?: number;
   take?: number;
-  accessToken: string;
 };
 export type FindResponseSuccess = {
   data: Post[];
@@ -27,7 +26,6 @@ export type FindResponse = FindResponseSuccess | FindResponseError;
 
 export type CreateRequestInput = {
   content: string;
-  accessToken: string;
 };
 export type CreateResponseSuccess = Post;
 export type CreateResponseError = {
@@ -39,7 +37,6 @@ export type CreateResponse = CreateResponseSuccess | CreateResponseError;
 
 export type RemoveRequestInput = {
   id: number;
-  accessToken: string;
 };
 export type RemoveResponseSuccess = Post;
 export type RemoveResponseError = {

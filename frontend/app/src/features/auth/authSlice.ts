@@ -3,14 +3,16 @@ import type { AuthState } from './types';
 import { signup, buildSignupExtraReducer } from './reducers/signup';
 import { signin, buildSigninExtraReducer } from './reducers/signin';
 import { signout, buildSignoutExtraReducer } from './reducers/signout';
+import {
+  refreshToken,
+  buildRefreshTokenExtraReducer,
+} from './reducers/refreshToken';
 
 const initialState: AuthState = {
   signin: {
     inProgress: false,
     error: null,
     id: null,
-    accessToken: null,
-    refreshToken: null,
     name: null,
     email: null,
   },
@@ -33,8 +35,9 @@ export const authSlice = createSlice({
     buildSignupExtraReducer(builder);
     buildSigninExtraReducer(builder);
     buildSignoutExtraReducer(builder);
+    buildRefreshTokenExtraReducer(builder);
   },
 });
 
-export { signup, signin, signout };
+export { signup, signin, signout, refreshToken };
 export default authSlice.reducer;

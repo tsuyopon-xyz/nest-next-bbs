@@ -8,7 +8,12 @@ import { UsersService } from '../users/users.service';
 import type { User } from 'src/prisma/types';
 import type { User as PrismaUser } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { JWTPayload, SigninResponse, Tokens } from './types';
+import {
+  JWTPayload,
+  RefreshTokenServiceResult,
+  SigninServiceResult,
+  Tokens,
+} from './types';
 import { SignUpDto } from './dtos/signup.dto';
 import { SendgridEmitter } from 'src/sendgrid/sendgrid.emitter';
 import { ConfigService } from '@nestjs/config';
@@ -31,7 +36,7 @@ export class AuthService {
     return user;
   }
 
-  async signin(user: User): Promise<SigninResponse> {
+  async signin(user: User): Promise<SigninServiceResult> {
     const tokens = await this.getTokens(user);
     await this.updateHashedRefreshToken(user, tokens.refreshToken);
 
@@ -132,9 +137,8 @@ export class AuthService {
 
   async refreshToken(
     user: PrismaUser,
-    authorization: string,
-  ): Promise<SigninResponse> {
-    const refreshToken = authorization.replace('Bearer', '').trim();
+    refreshToken: string,
+  ): Promise<RefreshTokenServiceResult> {
     const isRefreshTokenCorrect = await compareBcryptHashWithSHA256(
       refreshToken,
       user.hashedRefreshToken,

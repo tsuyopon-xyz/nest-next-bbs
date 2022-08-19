@@ -24,7 +24,7 @@ export const SigninForm: FC = () => {
   };
 
   if (signinState.inProgress) {
-    return <p>送信中...</p>;
+    return <p>ログイン中...</p>;
   }
 
   return (

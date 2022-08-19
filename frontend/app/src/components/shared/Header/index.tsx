@@ -19,7 +19,7 @@ export const Header: FC = () => {
           </li>
         </ul>
         <ul className={`${styles.navMenu} ${styles.navRightMenu}`}>
-          {signinState.accessToken ? (
+          {signinState.id ? (
             <>
               <li>（ユーザー名 : {signinState.name}）</li>
               <li>

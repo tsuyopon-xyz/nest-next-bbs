@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import type { FC } from 'react';
 import ReactPaginate from 'react-paginate';
-import { useAppSelector } from 'src/app/hooks';
 import { useFindPostsQuery } from 'src/features/posts/api/posts';
 import { PostList } from '../PostList';
 import { PostForm } from '../PostForm';
@@ -16,14 +15,7 @@ export const PostContainer: FC = () => {
     ? DEFAULT_PAGE_NUMBER
     : parseInt(router.query.page as string);
 
-  // src/pages/index.tsx内で、signinしていなかったら、このコンポーネントは使われないため、
-  // signinState.accessTokenはある前提でこのコンポーネントが読み込まれている
-  const accessToken = useAppSelector(
-    (state) => state.auth.signin.accessToken
-  ) as string;
-
   const { data, error, isFetching, isLoading } = useFindPostsQuery({
-    accessToken: accessToken as string,
     page: page,
     take: TAKE,
   });
@@ -37,7 +29,9 @@ export const PostContainer: FC = () => {
   }
 
   if (error) {
-    return <p>error発生（一度ログアウトしてください）</p>;
+    return (
+      <p>error発生（「ログアウト」 or 「ページ再読み込み」をしてください）</p>
+    );
   }
 
   if (!data) {
