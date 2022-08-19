@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Headers,
   Post,
   Query,
   Req,
@@ -18,6 +17,7 @@ import { SignUpDto } from './dtos/signup.dto';
 import { RequestPasswordResetDto } from './dtos/request-password-reset.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { Response as ExpressResponse } from 'express';
+import type { RefreshTokenResponse, SigninResponse } from './types';
 
 @Controller('auth')
 export class AuthController {
@@ -30,7 +30,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  async signin(@Req() req, @Res() res: ExpressResponse) {
+  async signin(@Req() req, @Res() res: ExpressResponse<SigninResponse>) {
     const { accessToken, refreshToken, ...rest } =
       await this.authService.signin(req.user);
 
@@ -43,26 +43,46 @@ export class AuthController {
       signed: true,
     });
 
-    res.json({
+    return res.json({
       ...rest,
-      accessToken,
-      refreshToken,
     });
   }
 
   @UseGuards(JwtRefreshAuthGuard)
   @Post('signout')
-  async signout(@Res() res: ExpressResponse) {
+  async signout(@Res() res: ExpressResponse<undefined>) {
     res.clearCookie(process.env.COOKIE_JWT_KEY);
     res.clearCookie(process.env.COOKIE_REFRESH_JWT_KEY);
 
-    res.status(HttpStatus.OK).json({});
+    res.status(HttpStatus.OK).json();
   }
 
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh-token')
-  async refreshToken(@Req() req, @Headers('authorization') authorization) {
-    return this.authService.refreshToken(req.user, authorization);
+  async refreshToken(
+    @Req() req,
+    @Res() res: ExpressResponse<RefreshTokenResponse>,
+  ) {
+    const refreshToken = req.signedCookies[process.env.COOKIE_REFRESH_JWT_KEY];
+
+    const {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      ...rest
+    } = await this.authService.refreshToken(req.user, refreshToken);
+
+    res.cookie(process.env.COOKIE_JWT_KEY, newAccessToken, {
+      httpOnly: true,
+      signed: true,
+    });
+    res.cookie(process.env.COOKIE_REFRESH_JWT_KEY, newRefreshToken, {
+      httpOnly: true,
+      signed: true,
+    });
+
+    return res.json({
+      ...rest,
+    });
   }
 
   @Get('confirm-email')
