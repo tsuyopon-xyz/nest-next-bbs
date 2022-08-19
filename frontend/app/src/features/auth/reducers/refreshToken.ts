@@ -4,6 +4,7 @@ import {
 } from '@reduxjs/toolkit';
 import type { AuthState, RefreshTokenResponse } from '../types';
 import { refreshToken as _refreshToken } from '../api';
+import { setHasTokensInCookie } from 'src/utils/localStorage';
 
 export const refreshToken = createAsyncThunk<RefreshTokenResponse, void>(
   `auth/refresh-token`,
@@ -27,6 +28,7 @@ export const buildRefreshTokenExtraReducer = (
           inProgress: false,
           ...action.payload,
         };
+        setHasTokensInCookie(true);
       } else {
         state.signin = {
           error: action.payload,
@@ -35,6 +37,7 @@ export const buildRefreshTokenExtraReducer = (
           name: null,
           email: null,
         };
+        setHasTokensInCookie(false);
       }
     })
     .addCase(refreshToken.rejected, (state, action) => {
@@ -49,5 +52,6 @@ export const buildRefreshTokenExtraReducer = (
         name: null,
         email: null,
       };
+      setHasTokensInCookie(false);
     });
 };

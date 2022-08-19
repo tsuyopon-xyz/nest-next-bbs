@@ -4,6 +4,7 @@ import {
 } from '@reduxjs/toolkit';
 import type { AuthState, SignoutResponse } from '../types';
 import { signout as _signout } from '../api';
+import { setHasTokensInCookie } from 'src/utils/localStorage';
 
 export const signout = createAsyncThunk<SignoutResponse>(
   `auth/signout`,
@@ -31,9 +32,9 @@ export const buildSignoutExtraReducer = (
         };
       }
       state.signout.inProgress = false;
+      setHasTokensInCookie(false);
     })
     .addCase(signout.rejected, (state, action) => {
-      console.log('@@signout3');
       const { message, code } = action.error;
       state.signout = {
         inProgress: false,
@@ -42,5 +43,6 @@ export const buildSignoutExtraReducer = (
           statusCode: code ? parseInt(code) : 0,
         },
       };
+      setHasTokensInCookie(false);
     });
 };

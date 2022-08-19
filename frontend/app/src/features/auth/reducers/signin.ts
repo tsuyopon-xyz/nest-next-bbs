@@ -4,6 +4,7 @@ import {
 } from '@reduxjs/toolkit';
 import type { AuthState, SigninResponse, SigninInput } from '../types';
 import { signin as _signin } from '../api';
+import { setHasTokensInCookie } from 'src/utils/localStorage';
 
 export const signin = createAsyncThunk<SigninResponse, SigninInput>(
   `auth/signin`,
@@ -27,6 +28,7 @@ export const buildSigninExtraReducer = (
           inProgress: false,
           ...action.payload,
         };
+        setHasTokensInCookie(true);
       } else {
         state.signin = {
           error: action.payload,
@@ -35,6 +37,7 @@ export const buildSigninExtraReducer = (
           name: null,
           email: null,
         };
+        setHasTokensInCookie(false);
       }
     })
     .addCase(signin.rejected, (state, action) => {
@@ -49,5 +52,6 @@ export const buildSigninExtraReducer = (
         name: null,
         email: null,
       };
+      setHasTokensInCookie(false);
     });
 };
