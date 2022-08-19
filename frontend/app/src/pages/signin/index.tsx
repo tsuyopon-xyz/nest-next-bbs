@@ -16,7 +16,8 @@ const SignupPage: NextPage = () => {
   }, [router, signinState]);
 
   if (signinState.accessToken) {
-    //ログイン済みの場合は、認証後のメインページに飛ばす
+    // ログイン済みの時は、router.isReadyになるまでは画面に何も表示させないようにする
+    // その後、トップページにリダイレクトさせる（useEffect内のコードを参照）
     return <></>;
   }
 
