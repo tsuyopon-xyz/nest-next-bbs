@@ -13,6 +13,7 @@ type Props = {
 export const Layout: FC<Props> = ({ children }) => {
   const dispatch = useAppDispatch();
 
+  // ページ起動時、ログイン情報（Cookie）を持っていれば自動ログインする
   useEffect(() => {
     if (hasTokensInCookie()) {
       dispatch(refreshToken());

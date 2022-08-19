@@ -29,7 +29,9 @@ export const PostContainer: FC = () => {
   }
 
   if (error) {
-    return <p>error発生（一度ログアウトしてください）</p>;
+    return (
+      <p>error発生（「ログアウト」 or 「ページ再読み込み」をしてください）</p>
+    );
   }
 
   if (!data) {
