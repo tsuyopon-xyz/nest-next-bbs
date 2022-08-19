@@ -2,24 +2,24 @@ import {
   createAsyncThunk,
   type ActionReducerMapBuilder,
 } from '@reduxjs/toolkit';
-import type { AuthState, SigninResponse, SigninInput } from '../types';
-import { signin as _signin } from '../api';
+import type { AuthState, RefreshTokenResponse } from '../types';
+import { refreshToken as _refreshToken } from '../api';
 
-export const signin = createAsyncThunk<SigninResponse, SigninInput>(
-  `auth/signin`,
-  async (input) => {
-    return _signin(input);
+export const refreshToken = createAsyncThunk<RefreshTokenResponse, void>(
+  `auth/refresh-token`,
+  async () => {
+    return _refreshToken();
   }
 );
 
-export const buildSigninExtraReducer = (
+export const buildRefreshTokenExtraReducer = (
   builder: ActionReducerMapBuilder<AuthState>
 ) => {
   builder
-    .addCase(signin.pending, (state) => {
+    .addCase(refreshToken.pending, (state) => {
       state.signin.inProgress = true;
     })
-    .addCase(signin.fulfilled, (state, action) => {
+    .addCase(refreshToken.fulfilled, (state, action) => {
       // 型ガードで SigninResponseSuccess / SigninResponseError を判断
       if ('id' in action.payload) {
         state.signin = {
@@ -37,7 +37,7 @@ export const buildSigninExtraReducer = (
         };
       }
     })
-    .addCase(signin.rejected, (state, action) => {
+    .addCase(refreshToken.rejected, (state, action) => {
       const { message, code } = action.error;
       state.signin = {
         error: {

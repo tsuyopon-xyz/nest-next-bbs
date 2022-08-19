@@ -5,22 +5,12 @@ import {
 import type { AuthState, SignoutResponse } from '../types';
 import { signout as _signout } from '../api';
 
-export const signout = createAsyncThunk<
-  SignoutResponse,
-  undefined,
-  {
-    state: {
-      auth: AuthState;
-    };
+export const signout = createAsyncThunk<SignoutResponse>(
+  `auth/signout`,
+  async () => {
+    return _signout();
   }
->(`auth/signout`, async (_, thunkAPI) => {
-  const refreshToken = thunkAPI.getState().auth.signin.refreshToken;
-  if (!refreshToken) {
-    throw new Error('ログインしていません');
-  }
-
-  return _signout({ refreshToken });
-});
+);
 
 export const buildSignoutExtraReducer = (
   builder: ActionReducerMapBuilder<AuthState>
@@ -35,8 +25,7 @@ export const buildSignoutExtraReducer = (
       } else {
         state.signin = {
           ...state.signin,
-          accessToken: null,
-          refreshToken: null,
+          id: null,
           email: null,
           name: null,
         };
@@ -44,6 +33,7 @@ export const buildSignoutExtraReducer = (
       state.signout.inProgress = false;
     })
     .addCase(signout.rejected, (state, action) => {
+      console.log('@@signout3');
       const { message, code } = action.error;
       state.signout = {
         inProgress: false,

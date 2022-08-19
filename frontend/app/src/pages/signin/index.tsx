@@ -10,12 +10,12 @@ const SignupPage: NextPage = () => {
   const signinState = useAppSelector((state) => state.auth.signin);
 
   useEffect(() => {
-    if (router.isReady && signinState.accessToken) {
+    if (router.isReady && signinState.id) {
       router.push('/');
     }
   }, [router, signinState]);
 
-  if (signinState.accessToken) {
+  if (signinState.id) {
     // ログイン済みの時は、router.isReadyになるまでは画面に何も表示させないようにする
     // その後、トップページにリダイレクトさせる（useEffect内のコードを参照）
     return <></>;
