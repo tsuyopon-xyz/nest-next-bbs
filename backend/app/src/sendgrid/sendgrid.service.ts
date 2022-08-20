@@ -19,10 +19,7 @@ export class SendgridService {
    * @param msg
    */
   private send(msg: sendgrid.MailDataRequired) {
-    console.log(
-      `${SendgridService.name}: 現在コメントアウトでメールを送らないようにしている`,
-    );
-    // return sendgrid.send(msg);
+    return sendgrid.send(msg);
   }
 
   @OnEvent(SignUpConfirmMail.type)
