@@ -6,7 +6,9 @@ export class SignUpConfirmMail {
   constructor(private to: string, private from: string, private jwt: string) {}
 
   public message(): sendgrid.MailDataRequired {
-    const emailConfirmationUrl = process.env.EMAIL_CONFIRMATION_URL;
+    const emailConfirmationUrl = process.env.HEROKU_APP_NAME
+      ? `https://${process.env.HEROKU_APP_NAME}.herokuapp.com/auth/confirm-email`
+      : process.env.EMAIL_CONFIRMATION_URL;
     return {
       to: this.to,
       from: this.from,
