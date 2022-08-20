@@ -1,0 +1,11 @@
+/* 参考: https://techacademy.jp/magazine/19410 */
+.pageContainer {
+  position: relative;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding-bottom: 3.5rem;/*←footerの高さ*/
+}
+
+.mainContainer {
+  padding: 1rem;
+}

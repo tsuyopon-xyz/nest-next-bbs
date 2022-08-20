@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
+model User {
+  id                 Int       @id @default(autoincrement())
+  name               String    @db.VarChar(20)
+  email              String    @db.VarChar(200) // uniqueにしない理由: 論理削除されている場合に登録できるようにするため
+  password           String // プログラムでpasswordをハッシュ化して、ハッシュ化したパスワードを保存する
+  hashedRefreshToken String? // JWTを更新するためのハッシュ値を保存
+  isEmailConfirmed   Boolean   @default(false) // 本登録のフラグ（登録直後は仮登録（false）。メール確認により本登録完了（true））
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime? @updatedAt
+  deletedAt          DateTime? // 論理削除用
+  Post               Post[]
+
+  @@index([name])
+  @@index([email])
+}
+
+// Twitterのように、一度投稿したら編集できないようにするためupdatedAtは作っていない
+model Post {
+  id        Int       @id @default(autoincrement())
+  content   String    @db.VarChar(500)
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  createdAt DateTime  @default(now())
+  deletedAt DateTime? // 論理削除用
+
+  @@index([authorId])
+}

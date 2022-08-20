@@ -1,0 +1,42 @@
+.postItemContainer {
+  width: 100%;
+  border: 1px solid #000;
+  padding: 1rem;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.postItemContainer a {
+  color: teal;
+  text-decoration: underline;
+}
+
+.postItemContainer:not(:first-child) {
+  margin-top: 1rem;
+}
+
+.postItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.postAuthorName {
+  color: #333;
+  font-weight: 800;
+}
+
+.postTime {
+  color: #777;
+}
+
+.postItemContent {
+  margin-top: 1rem;
+}
+
+.postItemFooter {
+  display: block;
+  text-align: right;
+  margin-top: 1rem;
+}
