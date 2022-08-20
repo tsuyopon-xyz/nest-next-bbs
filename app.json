@@ -1,0 +1,21 @@
+{
+  "name": "Backend for Nest Next BBS",
+  "description": "This is the api for next nest bbs app.",
+  "app": { "region": "us" },
+  "repository": "https://github.com/tsuyopon-xyz/nest-next-bbs",
+  "stack": "heroku-22",
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:hobby-dev",
+      "options": {
+        "version": "14"
+      }
+    }
+  ]
+}

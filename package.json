@@ -5,8 +5,12 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "dev:backend": "npm run start:dev --workspace=backend/app",
     "dev:frontend": "npm run dev --workspace=frontend/app",
+    "dev:backend": "npm run start:dev --workspace=backend/app",
+    "build:backend": "npm run build --workspace=backend/app",
+    "start:backend": "npm run start:prod --workspace=backend/app",
+    "heroku-postbuild": "npm run build:backend",
+    "start": "npm run start:backend",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,5 +18,9 @@
   "workspaces": [
     "backend/app",
     "frontend/app"
-  ]
+  ],
+  "engines": {
+    "node": "16.x",
+    "npm": "8.x"
+  }
 }
