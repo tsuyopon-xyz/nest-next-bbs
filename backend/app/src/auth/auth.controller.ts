@@ -100,13 +100,14 @@ export class AuthController {
     @Res() res: ExpressResponse,
     @Query('token') token: string,
   ) {
+    const url = process.env.FRONTEND_URL;
     try {
       const email = await this.authService.decodeConfirmationToken(token);
       await this.authService.confirmEmail(email);
-      res.redirect('http://localhost:3000/?confirm=succeeded');
+      res.redirect(`${url}?confirm=succeeded`);
     } catch (error) {
       console.log('confirm error : ' + error);
-      return res.redirect('http://localhost:3000/?confirm=failed');
+      return res.redirect(`${url}?confirm=failed`);
     }
   }
 

@@ -9,7 +9,7 @@ async function bootstrap() {
 
   // CORS options: https://github.com/expressjs/cors#configuration-options
   app.enableCors({
-    origin: process.env.ACCESS_ALLOW_ORIGIN,
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: 'GET,PUT,PATCH,POST,DELETE',
     allowedHeaders: ['Content-Type', 'Authorization'],
