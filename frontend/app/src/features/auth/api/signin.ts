@@ -1,7 +1,8 @@
 import type { SigninInput, SigninResponse } from '../types';
 
 export const signin = async (input: SigninInput): Promise<SigninResponse> => {
-  const res = await fetch('http://localhost:8000/auth/signin', {
+  const url = process.env.NEXT_PUBLIC_API_ENDPOINT + 'auth/signin';
+  const res = await fetch(url, {
     method: 'POST',
     mode: 'cors',
     credentials: 'include',

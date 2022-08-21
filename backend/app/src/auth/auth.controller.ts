@@ -34,13 +34,19 @@ export class AuthController {
     const { accessToken, refreshToken, ...rest } =
       await this.authService.signin(req.user);
 
+    // sameSite, secureについて
+    // https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/Set-Cookie/SameSite#none
     res.cookie(process.env.COOKIE_JWT_KEY, accessToken, {
       httpOnly: true,
       signed: true,
+      sameSite: 'none',
+      secure: true,
     });
     res.cookie(process.env.COOKIE_REFRESH_JWT_KEY, refreshToken, {
       httpOnly: true,
       signed: true,
+      sameSite: 'none',
+      secure: true,
     });
 
     return res.json({
@@ -74,10 +80,14 @@ export class AuthController {
     res.cookie(process.env.COOKIE_JWT_KEY, newAccessToken, {
       httpOnly: true,
       signed: true,
+      sameSite: 'none',
+      secure: true,
     });
     res.cookie(process.env.COOKIE_REFRESH_JWT_KEY, newRefreshToken, {
       httpOnly: true,
       signed: true,
+      sameSite: 'none',
+      secure: true,
     });
 
     return res.json({
