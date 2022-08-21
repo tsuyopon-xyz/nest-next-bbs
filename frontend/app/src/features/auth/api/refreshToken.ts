@@ -2,7 +2,8 @@ import type { RefreshTokenResponse } from '../types';
 
 // cookieに保存されているrefreshTokenを利用するため、requestBodyは無し
 export const refreshToken = async (): Promise<RefreshTokenResponse> => {
-  const res = await fetch('http://localhost:8000/auth/refresh-token', {
+  const url = process.env.NEXT_PUBLIC_API_ENDPOINT + 'auth/refresh-token';
+  const res = await fetch(url, {
     method: 'POST',
     mode: 'cors',
     credentials: 'include',

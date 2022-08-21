@@ -7,7 +7,6 @@ import type {
   RemoveRequestInput,
   RemoveResponseSuccess,
 } from '../types';
-import type { RootState } from 'src/app/store';
 
 const POSTS_END_POINT = 'posts';
 const REVALIDATION_TAG_TYPE = 'Posts';
@@ -17,17 +16,6 @@ export const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_ENDPOINT + POSTS_END_POINT,
-    prepareHeaders(headers, api) {
-      const state = api.getState() as RootState;
-      const signinState = state.auth.signin;
-      const accessToken = signinState.accessToken;
-
-      if (accessToken) {
-        headers.append('Authorization', `Bearer ${accessToken}`);
-      }
-
-      return headers;
-    },
     mode: 'cors',
     credentials: 'include',
     headers: {

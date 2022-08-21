@@ -7,7 +7,8 @@ import type {
 import { StatusCodes } from 'http-status-codes';
 
 export const signup = async (input: SignupInput): Promise<SignupResponse> => {
-  const res = await fetch('http://localhost:8000/auth/signup', {
+  const url = process.env.NEXT_PUBLIC_API_ENDPOINT + 'auth/signup';
+  const res = await fetch(url, {
     method: 'POST',
     mode: 'cors',
     credentials: 'include',
